@@ -1,0 +1,355 @@
+<html>
+    <head>
+        <title>Biz Staff Members</title> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>   
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Add banner image to webpage -->    
+        <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        .hero-image {
+          background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("Analytics.jpg");
+          height: 50%;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+        }
+        
+        .hero-text {
+          text-align: center;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+        }
+        
+        .hero-text button {
+          border: none;
+          outline: 0;
+          display: inline-block;
+          padding: 10px 25px;
+          color: black;
+          background-color: #ddd;
+          text-align: center;
+          cursor: pointer;
+        }
+        
+        .hero-text button:hover {
+          background-color: #555;
+          color: white;
+        }
+        
+        table{
+            width: 80%;
+        	margin: 2em auto;
+        }
+        
+        tr:nth-child(even){
+        
+        	background-color: #F7F7F7;
+        }
+        
+        thead{
+            background-color: darkgrey;
+        }
+        
+        th{
+        	padding: 0.75em 0;
+        }
+        
+        td{
+        	padding: 0.7em 1em;
+        }
+        
+        
+        
+        </style>
+    </head>
+    
+    <body>
+    
+        <div class="hero-image">
+          <div class="hero-text">
+            <h1 style="font-size:40px">Staff Table</h1>
+            <button id="showStoresButton" onclick="showStores()">Show Stores</button>
+          </div>
+        </div>
+    
+        <div> <button id="showCreateButton" onclick="showCreate()">Create New Staff Member</button></div>
+
+        <div>
+            <table class="table" id="staffsTable">
+                <tr>
+                    <th>id</th>
+                    <th>Staff_Name</th>
+                    <th>Staff_Surname</th>
+                    <th>Job_Title</th>
+                    <th>Salary</th>
+                    <th>Department</th>
+                    <th>Store_Name</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </table>
+        </div>
+        <div id='createUpdateForm' style="display: none">
+            <h2><span id="createLabel">Create a</span> <span id="updateLabel">update</span> staffs</h2>
+            <input type = "hidden" name = "id"/>
+            Staff_Name <input type = "text" name = "Staff_Name"/><br/>
+            Staff_Surname <input type = "text" name = "Staff_Surname"/><br/>
+            Job_Title <input type = "text" name = "Job_Title"/><br/>
+            Salary <input type = "text" name = "Salary"/><br/>
+            Department <input type = "text" name = "Department"/><br/>
+            Store_Name <input type = "text" name = "Store_Name"/><br/>
+
+            <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+            <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        </div>
+    </body>
+        <script>
+        function showStores(){
+            host = window.location.origin
+            document.getElementById("showStoresButton").onclick = function () {
+            window.location.href = "http://127.0.0.1:5000/storecrud.html";
+         }
+        
+        }
+        function showCreate() {
+            document.getElementById('showCreateButton').style.display = "none"
+            document.getElementById('staffsTable').style.display = "none"
+            document.getElementById('createUpdateForm').style.display = "block"
+            
+            document.getElementById('createLabel').style.display = "inline"
+            document.getElementById('updateLabel').style.display = "none"
+            
+            document.getElementById('doCreateButton').style.display = "block"
+            document.getElementById('doUpdateButton').style.display = "none"
+        }
+        function showViewAll() {
+            document.getElementById('showCreateButton').style.display = "block"
+            document.getElementById('staffsTable').style.display = "block"
+            document.getElementById('createUpdateForm').style.display = "none"
+        }
+        function showUpdate(buttonElement) {
+            document.getElementById('showCreateButton').style.display = "none"
+            document.getElementById('staffsTable').style.display = "none"
+            document.getElementById('createUpdateForm').style.display = "block"
+            document.getElementById('createLabel').style.display = "none"
+            document.getElementById('updateLabel').style.display = "inline"
+            document.getElementById('doCreateButton').style.display = "none"
+            document.getElementById('doUpdateButton').style.display = "block"
+            
+            var rowElement = buttonElement.parentNode.parentNode
+            console.log("msg:"+rowElement)
+            //var rowElement = buttonElement.closest('tr');
+            // these is a way of finding the closest <tr> which would safer, closest()
+            
+            var staffs = getStaffFromRow(rowElement)
+            console.log(JSON.stringify(staffs))
+            populateFormWithStaff(staffs)
+        }
+        function doCreate() {
+            var form = document.getElementById('createUpdateForm')
+            var staffs = {}
+            staffs.Staff_Name = form.querySelector('input[name="Staff_Name"]').value
+            staffs.Staff_Surname = form.querySelector('input[name="Staff_Surname"]').value
+            staffs.Job_Title = form.querySelector('input[name="Job_Title"]').value
+            staffs.Salary = parseInt(form.querySelector('input[name="Salary"]').value,10)
+            staffs.Department = form.querySelector('input[name="Department"]').value
+            staffs.Store_Name = form.querySelector('input[name="Store_Name"]').value
+
+            console.log(JSON.stringify(staffs));
+            createStaffAjax(staffs)
+            clearForm();
+               showViewAll();
+
+        }
+        function doUpdate() {
+            var staffs = getStaffFromForm();
+            var rowElement = document.getElementById(staffs.id)
+            updateStaffAjax(staffs);
+            setStaffInRow(rowElement, staffs)
+            clearForm()
+            showViewAll()
+        }
+        function doDelete(r) {
+        if (confirm('Are you sure you want to delete this staff?')) {
+            var tableElement = document.getElementById('staffsTable');
+            var rowElement = r.parentNode.parentNode;
+            var index = rowElement.rowIndex;
+            deleteStaffAjax(rowElement.getAttribute("id"));
+            tableElement.deleteRow(index);
+              }
+              else {
+           return false;
+       }   
+        }
+        function addStaffToTable(staffs) {
+            var tableElement = document.getElementById('staffsTable')
+            var rowElement = tableElement.insertRow(-1)
+            rowElement.setAttribute('id', staffs.id)
+            var cell1 = rowElement.insertCell(0);
+            cell1.innerHTML = staffs.id
+            var cell2 = rowElement.insertCell(1);
+            cell2.innerHTML = staffs.Staff_Name
+            var cell3 = rowElement.insertCell(2);
+            cell3.innerHTML = staffs.Staff_Surname
+            var cell4 = rowElement.insertCell(3);
+            cell4.innerHTML = staffs.Job_Title
+            var cell5 = rowElement.insertCell(4);
+            cell5.innerHTML = staffs.Salary
+            var cell6 = rowElement.insertCell(5);
+            cell6.innerHTML = staffs.Department
+            var cell7 = rowElement.insertCell(6);
+            cell7.innerHTML = staffs.Store_Name
+            var cell8 = rowElement.insertCell(7);
+            cell8.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+            var cell9 = rowElement.insertCell(8);
+            cell9.innerHTML = '<button onclick="doDelete(this)">delete</button>'
+        }
+        
+        function clearForm() {
+            var form = document.getElementById('createUpdateForm')
+            form.querySelector('input[name="Staff_Name"]').value = ''
+            form.querySelector('input[name="Staff_Surname"]').value = ''
+            form.querySelector('input[name="Job_Title"]').value = ''
+            form.querySelector('input[name="Salary"]').value = ''
+            form.querySelector('input[name="Department"]').value = ''
+            form.querySelector('input[name="Store_Name"]').value = ''
+
+        }
+        function getStaffFromRow(rowElement) {
+            var form = document.getElementById('createUpdateForm')
+            var staffs = {}
+            staffs.id = rowElement.cells[0].firstChild.textContent
+            //staffs.id  = rowElement.getAttribute('id')
+            staffs.Staff_Name = rowElement.cells[1].firstChild.textContent
+            staffs.Staff_Surname = rowElement.cells[2].firstChild.textContent
+            staffs.Job_Title = rowElement.cells[3].firstChild.textContent
+            staffs.Salary = parseInt(rowElement.cells[4].firstChild.textContent,10)
+            staffs.Department = rowElement.cells[5].firstChild.textContent
+            staffs.Store_Name = rowElement.cells[6].firstChild.textContent
+            return staffs
+        }
+        function setStaffInRow(rowElement, staffs) {
+            //rowElement.cells[0].firstChild.textContent = staffs.id
+            rowElement.cells[1].firstChild.textContent = staffs.Staff_Name
+            rowElement.cells[2].firstChild.textContent = staffs.Staff_Surname
+            rowElement.cells[3].firstChild.textContent = staffs.Job_Title
+            rowElement.cells[4].firstChild.textContent = staffs.Salary
+            rowElement.cells[5].firstChild.textContent = staffs.Department
+            rowElement.cells[6].firstChild.textContent = staffs.Store_Name
+
+        }
+        function populateFormWithStaff(Staff) {
+            var form = document.getElementById('createUpdateForm')
+            form.querySelector('input[name="id"]').disabled = true
+            console.log(JSON.stringify(Staff))
+            form.querySelector('input[name="id"]').value = Staff.id //changed this
+            form.querySelector('input[name="Staff_Name"]').value = Staff.Staff_Name
+            form.querySelector('input[name="Staff_Surname"]').value = Staff.Staff_Surname
+            form.querySelector('input[name="Job_Title"]').value = Staff.Job_Title
+            form.querySelector('input[name="Salary"]').value = Staff.Salary
+            form.querySelector('input[name="Department"]').value = Staff.Department
+            form.querySelector('input[name="Store_Name"]').value = Staff.Store_Name
+            return form
+        }
+        function getStaffFromForm() {
+            var form = document.getElementById('createUpdateForm')
+            var staffs = {}
+            staffs.id = form.querySelector('input[name="id"]').value
+            //parseInt(form.querySelector('input[name="id"]').value,10)
+           // form.querySelector('input[name="id"]').value
+            staffs.Staff_Name = form.querySelector('input[name="Staff_Name"]').value
+            staffs.Staff_Surname = form.querySelector('input[name="Staff_Surname"]').value
+            staffs.Job_Title = form.querySelector('input[name="Job_Title"]').value
+            staffs.Salary = parseInt(form.querySelector('input[name="Salary"]').value,10)
+            staffs.Department = form.querySelector('input[name="Department"]').value
+            staffs.Store_Name = form.querySelector('input[name="Store_Name"]').value
+
+            console.log(JSON.stringify(staffs))
+            return staffs
+        }
+        function getAllAjax(){
+            $.ajax({
+                "url":"http://127.0.0.1:5000/staff",
+                "method":"GET",
+                "data":"",
+                "dataType":"JSON",
+                "success":function(result){
+                    for(staffs of result){
+                        addStaffToTable(staffs);
+                    }
+                },
+                "error":function(xhr,status,error){
+                    console.log("error: "+status+" msg:"+error);
+                }
+            });
+        }
+        function createStaffAjax(staffs){
+        //var staffs = {""}
+               console.log(JSON.stringify(staffs));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/staff",
+            "method":"POST",
+            "data":JSON.stringify(staffs),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                staffs.id = result.id
+                addStaffToTable(staffs)
+                clearForm()
+                showViewAll()
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        function updateStaffAjax(staffs){
+           console.log(JSON.stringify(staffs));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/staff/"+encodeURI(staffs.id),
+            "method":"PUT",
+            "data":JSON.stringify(staffs),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        function deleteStaffAjax(id){
+            //console.log(JSON.stringify('deleting'+id));
+            $.ajax({
+            "url": "http://127.0.0.1:5000/staff/"+encodeURI(id),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        
+        getAllAjax();
+    </script>
+
+</html>

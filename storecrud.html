@@ -1,0 +1,318 @@
+<html>
+    <head>
+        <title>View Store Details</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- CSS Styling for webpage -->    
+        <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        .hero-image {
+          background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("Analytics.jpg");
+          height: 50%;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+        }
+        
+        .hero-text {
+          text-align: center;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+        }
+        
+        .hero-text button {
+          border: none;
+          outline: 0;
+          display: inline-block;
+          padding: 10px 25px;
+          color: black;
+          background-color: #ddd;
+          text-align: center;
+          cursor: pointer;
+        }
+        
+        .hero-text button:hover {
+          background-color: #555;
+          color: white;
+        }
+        
+        .button {
+          background-color: #f44336; /* Red */
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+        }
+        
+        table{
+            width: 80%;
+        	margin: 2em auto;
+        }
+        
+        tr:nth-child(even){
+        
+        	background-color: #F7F7F7;
+        }
+        
+        thead{
+            background-color: darkgrey;
+        }
+        
+        th{
+        	padding: 0.75em 0;
+        }
+        
+        td{
+        	padding: 0.7em 1em;
+        }
+        
+    </style>
+    </head>
+    
+    <body>
+    
+    <div class="hero-image">
+          <div class="hero-text">
+            <h1 style="font-size:40px">Store Table</h1>
+            <button id="showStaffButton" onclick="showStaffpage()">Show Staff Table</button>
+          </div>
+        </div>
+    
+    
+        <div> <button id="showCreateButton" onclick="showCreate()">Create a New Store</button></div>
+        <div>
+            <table class="table" id="storeTable">
+                <tr>
+                    <th>id</th>
+                    <th>Store_Name</th>
+                    <th>Num_staff</th>
+                </tr>
+            </table>
+        </div>
+        <div id='createUpdateForm' style="display: none">
+            <h2><span id="createLabel">Create a</span> <span id="updateLabel">update</span> stores</h2>
+            <input type = "hidden" name = "id"/>
+            Store_Name <input type = "text" name = "Store_Name"/><br/>
+            Num_staff <input type = "text" name = "Num_staff"/><br/>
+            <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+            <span><button class= ".button" id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        </div>
+    </body>
+        <script>
+        
+         function showStaffpage(){
+            document.getElementById("showStaffButton").onclick = function () {
+            window.location.href = "http://127.0.0.1:5000/staffcrud.html";
+         }
+        }
+        function showCreate() {
+            document.getElementById('showCreateButton').style.display = "none"
+            document.getElementById('storeTable').style.display = "none"
+            document.getElementById('createUpdateForm').style.display = "block"
+            document.getElementById('createLabel').style.display = "inline"
+            document.getElementById('updateLabel').style.display = "none"
+            document.getElementById('doCreateButton').style.display = "block"
+            document.getElementById('doUpdateButton').style.display = "none"
+        }
+        function showViewAll() {
+            document.getElementById('showCreateButton').style.display = "block"
+            document.getElementById('storeTable').style.display = "block"
+            document.getElementById('createUpdateForm').style.display = "none"
+        }
+        function showUpdate(buttonElement) {
+            document.getElementById('showCreateButton').style.display = "none"
+            document.getElementById('storeTable').style.display = "none"
+            document.getElementById('createUpdateForm').style.display = "block"
+            document.getElementById('createLabel').style.display = "none"
+            document.getElementById('updateLabel').style.display = "inline"
+            document.getElementById('doCreateButton').style.display = "none"
+            document.getElementById('doUpdateButton').style.display = "block"
+            
+            var rowElement = buttonElement.parentNode.parentNode
+            var stores = getStoreFromRow(rowElement)
+            console.log(JSON.stringify(stores))
+            populateFormWithStores(stores)
+        }
+        function doCreate() {
+            var form = document.getElementById('createUpdateForm')
+            var stores = {}
+            stores.Store_Name = form.querySelector('input[name="Store_Name"]').value
+            stores.Num_staff = parseInt(form.querySelector('input[name="Num_staff"]').value,10)
+            console.log(JSON.stringify(stores));
+            createStoreAjax(stores)
+            clearForm();
+               showViewAll();
+
+        }
+        function doUpdate() {
+            var stores = getStaffFromForm();
+            var rowElement = document.getElementById(stores.id)
+            updateStoreAjax(stores);
+            setStoreInRow(rowElement, stores)
+            clearForm()
+            showViewAll()
+        }
+        function doDelete(r) {
+            if (confirm('Are you sure you want to delete this store?')) {
+                var tableElement = document.getElementById('storeTable');
+                var rowElement = r.parentNode.parentNode;
+                var index = rowElement.rowIndex;
+                deleteStoreAjax(rowElement.getAttribute("id"));
+                tableElement.deleteRow(index);
+                }
+              else {
+           return false;
+       }   
+        }
+        function addStoreToTable(stores) {
+            var tableElement = document.getElementById('storeTable')
+            var rowElement = tableElement.insertRow(-1)
+            rowElement.setAttribute('id', stores.id)
+            var cell1 = rowElement.insertCell(0);
+            cell1.innerHTML = stores.id
+            var cell2 = rowElement.insertCell(1);
+            cell2.innerHTML = stores.Store_Name
+            var cell3 = rowElement.insertCell(2);
+            cell3.innerHTML = stores.Num_staff
+            var cell4 = rowElement.insertCell(3);
+            cell4.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+            var cell5 = rowElement.insertCell(4);
+            cell5.innerHTML = '<button onclick="doDelete(this)">delete</button>'
+            var cell6 = rowElement.insertCell(5);
+
+        }
+        
+        function clearForm() {
+            var form = document.getElementById('createUpdateForm')
+            form.querySelector('input[name="Store_Name"]').value = ''
+            form.querySelector('input[name="Num_staff"]').value = ''
+        }
+        
+        function getStoreFromRow(rowElement) {
+            var form = document.getElementById('createUpdateForm')
+            var stores = {}
+            stores.id = rowElement.cells[0].firstChild.textContent
+            //stores.id  = rowElement.getAttribute('id')
+            stores.Store_Name = rowElement.cells[1].firstChild.textContent
+            stores.Num_staff = parseInt(rowElement.cells[2].firstChild.textContent,10)
+            return stores
+        }
+        
+        function setStoreInRow(rowElement, stores) {
+            //rowElement.cells[0].firstChild.textContent = stores.id
+            rowElement.cells[1].firstChild.textContent = stores.Store_Name
+            rowElement.cells[2].firstChild.textContent = stores.Num_staff
+        }
+        
+        function populateFormWithStores(Store) {
+            var form = document.getElementById('createUpdateForm')
+            form.querySelector('input[name="id"]').disabled = true
+            console.log(JSON.stringify(Store))
+            form.querySelector('input[name="id"]').value = Store.id //changed this
+            form.querySelector('input[name="Store_Name"]').value = Store.Store_Name
+            form.querySelector('input[name="Num_staff"]').value = Store.Num_staff
+            return stores
+        }
+        
+        function getStaffFromForm() {
+            var form = document.getElementById('createUpdateForm')
+            var stores = {}
+            stores.id = form.querySelector('input[name="id"]').value
+            //parseInt(form.querySelector('input[name="id"]').value,10)
+           // form.querySelector('input[name="id"]').value
+            stores.Store_Name = form.querySelector('input[name="Store_Name"]').value
+            stores.Num_staff = parseInt(form.querySelector('input[name="Num_staff"]').value,10)
+            console.log(JSON.stringify(stores))
+            return stores
+        }
+        function getAllAjax(){
+            $.ajax({
+                "url":"http://127.0.0.1:5000/store",
+                "method":"GET",
+                "data":"",
+                "dataType":"JSON",
+                "success":function(result){
+                    for(stores of result){
+                        addStoreToTable(stores);
+                    }
+                },
+                "error":function(xhr,status,error){
+                    console.log("error: "+status+" msg:"+error);
+                }
+            });
+        }
+        
+        function createStoreAjax(stores){
+        //var stores = {""}
+               console.log(JSON.stringify(stores));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/store",
+            "method":"POST",
+            "data":JSON.stringify(stores),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                stores.id = result.id
+                addStoreToTable(stores)
+                clearForm()
+                showViewAll()
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        function updateStoreAjax(stores){
+           console.log(JSON.stringify(stores));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/store/"+encodeURI(stores.id),
+            "method":"PUT",
+            "data":JSON.stringify(stores),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        function deleteStoreAjax(id){
+            //console.log(JSON.stringify('deleting'+id));
+            $.ajax({
+            "url": "http://127.0.0.1:5000/store/"+encodeURI(id),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+        
+        getAllAjax();
+    </script>
+
+</html>
