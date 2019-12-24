@@ -18,7 +18,7 @@ The second page consists of the store table. This contains details about the sto
 
 Both pages utilise a javascript contain method, to prompt the user prior to deleting information from the staff or store tables. 
 
-![error_checking](error_checking.JPG)
+![error_checking](https://github.com/roisinanglim/restfulapi/blob/master/Images/error_checking.JPG)
 
 #### SQL Database 
 The SQL database contains two tables the staff and the store tables. The employee id is identified as the primary key within the staff table and the id is the primary key within the store table. An auto_increment function is utilised on both tables, it works by automatically assigning the next id to any new staff member created.
