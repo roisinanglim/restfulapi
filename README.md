@@ -2,21 +2,21 @@
 
 #### Details of Repository 
 
-This repository comprises of a web application that hosts staff and store details. The web application consumes a restful api. The restful api facilitates read,create,update and delete (CRUD) functions to be carried out on an SQL database.
+This repository comprises of a web application that hosts staff and store details. The web application consumes a restful api. The restful api facilitates read, create, update and delete (CRUD) functions between the web application and the MYSQL database.
 
 
 #### Website 
 
-The website is made up of two pages. The first page contains a staff table holding the staff's details.The update,create and delete buttons within the wedpage, enable the staff details to be amended. Upon clicking on any of the labelled buttons,the staff details are prompted. Once these details are submitted, the selected function is called and both the sql database and the webpage are updated. The show store button located in the centre of the page allows for easy navigation to the store table.
+The website is made up of two pages. The first page contains a staff table holding the staff's details. The update, create and delete buttons within the webpage, enable the staff details to be amended. Upon clicking on any of the labelled buttons, the staff details are prompted. Once these details are submitted, the selected function is called and both the sql database and the webpage are updated. The show store button located in the centre of the page allows for easy navigation to the store table.
 
 ![StaffTable](https://github.com/roisinanglim/restfulapi/blob/master/Images/stafftablepg1.JPG)
 
-The second page consists of the store table. This contains details about the store's locations. The update,create and delete buttons within the wedpage, enable the stores details to be amended. Upon clicking on any of the labelled buttons,the store details are prompted. Once these details are submitted, the selected function is called and both the sql database and the webpage are updated.The show staff button located in the centre of the page allows for easy navigation to the staff table.
+The second page consists of the store table. This contains details about the store's locations. The update, create and delete buttons within the webpage, enable the stores details to be amended. Upon clicking on any of the labelled buttons, the store details are prompted. Once these details are submitted, the selected function is called and both the sql database and the webpage are updated. The show staff button located in the centre of the page allows for easy navigation to the staff table.
 
 ![StoreTable](https://github.com/roisinanglim/restfulapi/blob/master/Images/storetablepg2.JPG)
 
 
-Both pages utilise a javascript contain method, to prompt the user prior to deleting information from the staff or store tables. 
+Both pages utilise a JavaScript contain method, to prompt the user prior to deleting information from the staff or store tables. 
 
 ![error_checking](https://github.com/roisinanglim/restfulapi/blob/master/Images/error_checking.JPG)
 
@@ -33,16 +33,16 @@ MYSQL - You will require an SQL database to create and store the tables details.
 
 Python - You will require python to generate your functions to conduct the CRUD commands. [Download Here](https://www.anaconda.com/distribution/)
 
-Flask Server - This will be required to interact and return information between the browser and the database.This is not download as part of the anaconda package.To install flask run the following command in the command prompt  - pip install flask
-Run Flask - Set FLASK_APP=server1 - flask run
+Flask Server - This will be required to interact and return information between the browser and the database. This is not download as part of the anaconda package. To install flask run the following command in the command prompt  - pip install flask.
 
 
-Virtual Environment - Create vitual enviornment run python-m venv venv in the command prompt. Run pip freeze > requirements.txt to save all of the packages.
+Virtual Environment - Create virtual environment run python-m venv venv in the command prompt. Run pip freeze > requirements.txt to save all of the packages.
 
 
-#### How to run  the repository 
+#### How to run the repository 
  1. Download the repository folder.
  2. Through the command navigate to the folder 
- 3. In the command prompt activate the virtual enviornment python-m venv venv
+ 3. In the command prompt activate the virtual environment running the commend - python-m venv venv
  4. Set FLASK_APP=server1
- 5. flask run
+ 5. Run the flask server using the command - flask run
+ 6. Go to the URL - http://127.0.0.1:5000/staffcrud.html
