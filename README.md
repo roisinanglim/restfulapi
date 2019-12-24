@@ -28,16 +28,10 @@ The SQL database contains two tables the staff and the store tables. The employe
 
 
 
-
-
-
-
-
-
-
 #### Packages Required
-SQL - You will require an SQL database to create and store the tables details. Download Here 
-Python - You will require pytho to generate your functions to conduct the CRUD commands. Download Here 
+MYSQL - You will require an SQL database to create and store the tables details. [Download Here ](https://www.mysql.com/downloads/)
+Python - You will require python to generate your functions to conduct the CRUD commands. [Download Here](https://www.anaconda.com/distribution/)
+Flask Server - This will be required to This is download as part of the anaconda package.[Download Here](https://www.anaconda.com/distribution/)
 
 
 
