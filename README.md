@@ -30,9 +30,19 @@ The SQL database contains two tables the staff and the store tables. The employe
 
 #### Packages Required
 MYSQL - You will require an SQL database to create and store the tables details. [Download Here ](https://www.mysql.com/downloads/)
-Python - You will require python to generate your functions to conduct the CRUD commands. [Download Here](https://www.anaconda.com/distribution/)
-Flask Server - This will be required to This is download as part of the anaconda package.[Download Here](https://www.anaconda.com/distribution/)
 
+Python - You will require python to generate your functions to conduct the CRUD commands. [Download Here](https://www.anaconda.com/distribution/)
+
+Flask Server - This will be required to interact and return information between the browser and the database.This is not download as part of the anaconda package.To install flask run the following command in the command prompt  - pip install flask
+Run Flask - Set FLASK_APP=server1 - flask run
+
+
+Virtual Environment - Create vitual enviornment run python-m venv venv in the command prompt. Run pip freeze > requirements.txt to save all of the packages.
 
 
 #### How to run  the repository 
+ 1. Download the repository folder.
+ 2. Through the command navigate to the folder 
+ 3. In the command prompt activate the virtual enviornment python-m venv venv
+ 4. Set FLASK_APP=server1
+ 5. flask run
