@@ -23,8 +23,8 @@ Both pages utilise a javascript contain method, to prompt the user prior to dele
 #### SQL Database 
 The SQL database contains two tables the staff and the store tables. The employee id is identified as the primary key within the staff table and the id is the primary key within the store table. An auto_increment function is utilised on both tables, it works by automatically assigning the next id to any new staff member created.
 
-![storesql](sqlstore.JPG)
-![staffsql](sqlstaff.JPG)
+![storesql](Images.sqlstore.JPG)
+![staffsql](Images.sqlstaff.JPG)
 
 
 
